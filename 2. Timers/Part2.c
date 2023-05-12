@@ -64,17 +64,26 @@ __interrupt void Port_2(void)
     // @TODO When the button is pressed, you can change what the CCR0 Register is for the Timer. You will need to track what speed you should be flashing at.
     P2IFG &= ~BIT3; //set interrupt flag as 0
     
-    if(counter = 50000) //cycle through the different clock cycles
+    switch(counter) //cycle through the different clock cycles
     {
-        counter = 20000; 
+        case 0: {
+            TB1CCR0 = 20000;
+            counter++;
+            break;
+        }
     }
-    else if(counter == 20000) 
-    {
-        counter = 5000;
-    }
-    else
-    {
-        counter = 50000;
+        case 1: {
+            counter = 5000;
+            counter++;
+            break;
+        }
+    
+        case 2: {
+            counter = 50000;
+            counter++;
+            break;
+        }
+        
     }
 
 // Timer B1 interrupt service routine
