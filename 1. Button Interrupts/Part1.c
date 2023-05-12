@@ -2,7 +2,9 @@
  * Part1.c
  *
  *  Created on: Feb 11, 2023
- *      Author: Russell Trafford
+ *  Author: Russell Trafford
+ Changes made by Elise Heim
+ 
  *
  *  This code is a template which will change the color of the LED being blinked using the interrupt routine.
  */
@@ -79,17 +81,21 @@ void gpioInit(){
 __interrupt void Port_2(void)
 {
     P2IFG &= ~BIT3;                         // Clear P1.3 IFG
+    P1OUT &= ~BIT0; //turn off red led, 1.0
 
-    if ( )       // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a rising edge.
+    if (P2IES & BIT3)       // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a rising edge.
     {
         LED_Color = 0;
         // @TODO Add code to change which edge the interrupt should be looking for next
+        P2IES &= ~BIT3; //look for falling edge
     }
 
-    else if ( ) // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a falling edge.
+    else if (P2IES != BIT3) // @TODO Fill in this argument within the If statement to check if the interrupt was triggered off a falling edge.
     {
         LED_Color = 1;
         // @TODO Add code to change which edge the interrupt should be looking for next
+        P2IES |= BIT3; //look for rising edge
+        P6OUT &= ~BIT6; // turn off green led, 6.6
     }
 }
 
