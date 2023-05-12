@@ -2,8 +2,8 @@
  * Part2.c
  *
  *  Created on: Feb 11, 2023
- *      Author: Russell Trafford
- *
+ *  Author: Russell Trafford
+ * Changes made by Elise Heim
  *      This code will need to change the speed of an LED between 3 different speeds by pressing a button.
  */
 
@@ -18,6 +18,8 @@ void main(){
 
     gpioInit();
     timerInit();
+    
+    int counter = 20000;
 
     // Disable the GPIO power-on default high-impedance mode
     // to activate previously configured port settings
@@ -30,15 +32,22 @@ void main(){
 
 void gpioInit(){
     // @TODO Initialize the Red or Green LED
-
+    P1DIR |= BIT0; //1.0 as output
+    P1OUT &= ~BIT0; //1.0 clear previous config
+    
     // @TODO Initialize Button 2.3
-
-
+    P2OUT |= BIT3; //2.3 pulled up
+    P2REN |= BIT3; //pull up register enabled for 2.3
+    P2IES &= ~BIT3; //low to high edge 
+    P2IE |= BIT3; // interrupt enabled for 2.3
 }
 
 void timerInit(){
     // @TODO Initialize Timer B1 in Continuous Mode using ACLK as the source CLK with Interrupts turned on
-
+    TB1CCTL0 = CCIE; //interrupt enabled
+    TB1CCR0 = 50000; //set max for timer B
+    TB1CTL = TBSSEL_1 | MC_2; // ACLK as continuous 
+     
 }
 
 
@@ -51,17 +60,30 @@ void timerInit(){
 __interrupt void Port_2(void)
 {
     // @TODO Remember that when you service the GPIO Interrupt, you need to set the interrupt flag to 0.
-
+    P1OUT ^= BIT0; //toggle red led, 1.0
     // @TODO When the button is pressed, you can change what the CCR0 Register is for the Timer. You will need to track what speed you should be flashing at.
-
-}
-
+    P2IFG &= ~BIT3; //set interrupt flag as 0
+    
+    if(counter = 50000) //cycle through the different clock cycles
+    {
+        counter = 20000; 
+    }
+    else if(counter == 20000) 
+    {
+        counter = 5000;
+    }
+    else
+    {
+        counter = 50000;
+    }
 
 // Timer B1 interrupt service routine
 #pragma vector = TIMER1_B0_VECTOR
 __interrupt void Timer1_B0_ISR(void)
 {
     // @TODO You can toggle the LED Pin in this routine and if adjust your count in CCR0.
+    P1OUT ^= BIT0; toggle red led, 1.0
+    TB1CCR0 += counter; // add offset that's equal to counter
 }
 
 
